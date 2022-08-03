@@ -77,3 +77,13 @@ def who_am_i(request):
         return JsonResponse({'user': data})
     else:
         return JsonResponse({'user': None})
+    
+## SAVE DATA MANAGEMENT
+
+@api_view(['POST'])
+def create_save_data(request, data):
+    user = request.user
+    user.riddles.count = data['riddles_count']
+    
+    pass
+

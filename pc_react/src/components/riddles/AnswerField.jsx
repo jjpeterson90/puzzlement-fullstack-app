@@ -2,8 +2,6 @@
 
 function AnswerField( {lettersGuessed, unselectLetter } ) {
 
-  console.log('guessed: ', ...lettersGuessed)
-
   function getId(index) {
     if (lettersGuessed[index] !== undefined) {
       return `${lettersGuessed[index][1]}`

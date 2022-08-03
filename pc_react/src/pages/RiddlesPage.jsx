@@ -15,12 +15,12 @@ function Riddles() {
   const [ letterChoices, setLetterChoices ] = useState(getLetterChoices())
 
   function getLetterChoices() {
-    let list = riddles[count].answer.toUpperCase().split('')
-    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    while (list.length < 14) {
-      list.push(alphabet.charAt(Math.floor(Math.random()*alphabet.length)))
-    }
-    return shuffle(list)
+      let list = riddles[count].answer.toUpperCase().split('')
+      const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+      while (list.length < 14) {
+        list.push(alphabet.charAt(Math.floor(Math.random()*alphabet.length)))
+      }
+      return shuffle(list)
   }
 
   function getLettersGuessed() {
@@ -57,14 +57,11 @@ function Riddles() {
     if (event.target.textContent !== '_') {
       let ansIndex = event.target.getAttribute('index')
       let ltrTile = document.getElementById(event.target.getAttribute('ltrId'))
-      
       let newList = [...lettersGuessed]
       newList[ansIndex] = ['_', undefined]
       setLettersGuessed(newList)
-
       ltrTile.style.visibility = 'visible'
     }
-    console.log('unselect: ', event.target)
   }
 
   return (
