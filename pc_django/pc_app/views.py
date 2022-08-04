@@ -3,13 +3,16 @@ from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.contrib.auth import login, logout, authenticate
 from rest_framework.decorators import api_view
-from .models import AppUser
+from .models import AppUser, UserSaveData, Riddle, PictureSlider, TileFlip
 
 
-# Create your views here.
+###   HOMEPAGE   ############################################
 def homepage(request):
     index_page = open('static/index.html').read()
     return HttpResponse(index_page)
+
+
+###  USER AUTH   ############################################
 
 @api_view(['POST'])
 def sign_up(request):
@@ -83,7 +86,9 @@ def who_am_i(request):
 @api_view(['POST'])
 def create_save_data(request, data):
     user = request.user
-    user.riddles.count = data['riddles_count']
+    print(user)
     
-    pass
+    return JsonResponse({'success': True})
 
+
+###  USER SAVE DATA   #######################################

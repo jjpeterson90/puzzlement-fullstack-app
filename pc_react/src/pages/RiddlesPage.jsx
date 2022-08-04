@@ -5,6 +5,8 @@ import AnswerField from '../components/riddles/AnswerField'
 import LetterTiles from '../components/riddles/LetterTiles'
 // data
 import riddlelist from '../data/riddlelist.json'
+// bootstrap icons
+import { ImShuffle } from 'react-icons/im'
 
 
 function Riddles() {
@@ -14,13 +16,18 @@ function Riddles() {
   const [ lettersGuessed, setLettersGuessed ] = useState(getLettersGuessed())
   const [ letterChoices, setLetterChoices ] = useState(getLetterChoices())
 
+  useEffect( () => {
+    checkForWin()
+  }, [lettersGuessed])
+
   function getLetterChoices() {
       let list = riddles[count].answer.toUpperCase().split('')
       const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
       while (list.length < 14) {
         list.push(alphabet.charAt(Math.floor(Math.random()*alphabet.length)))
       }
-      return shuffle(list)
+      // return list
+      return shuffleArray(list)
   }
 
   function getLettersGuessed() {
@@ -29,7 +36,7 @@ function Riddles() {
     return newList
   }
 
-  function shuffle(array) {
+  function shuffleArray(array) {
     let currentIndex = array.length, randomIndex;
     while (currentIndex != 0) {
       randomIndex = Math.floor(Math.random() * currentIndex);
@@ -64,15 +71,62 @@ function Riddles() {
     }
   }
 
+  function checkForWin() {
+    const solution = riddles[count].answer.toUpperCase()
+    const user_answer = lettersGuessed.map((elem) => {
+      if (elem[0].match(/[A-Z]/)) return elem[0]
+    }).join('')
+    const answerTiles = document.querySelectorAll('.ans-tile')
+
+    // Set answer tiles font color based on solution status
+    answerTiles.forEach(element => {
+      if (user_answer.length === solution.length) {
+        if (solution === user_answer) {
+          element.style.color = 'rgb(0,220,0)'
+          // redirect to win screen
+        } else {
+          element.style.color = 'rgb(255,130,0)'
+        }
+      } else {
+        if (element.style.color = 'rgb(255,255,255)') return
+        else element.style.color = 'rgb(255,255,255)'
+      }
+    })
+  }
+
+  const shuffleChoiceTiles = () => {
+    console.log('shuffling')
+    let newChoices = shuffleArray(letterChoices)
+    setLetterChoices([...newChoices])
+  }
+
+  function saveUserData() {
+    
+  }
+
   return (
-    <section className="d-flex flex-column align-items-center">
-      <h1 className="mb-5">
-        Riddles
-      </h1>
-      <DisplayQuestion question={riddles[count].question}/>
-      <AnswerField lettersGuessed={lettersGuessed} unselectLetter={unselectLetter}/>
-      <LetterTiles letterChoices={letterChoices} selectLetter={selectLetter} />
-    </section>
+    <div className="container p-0">
+      <div className="text-center">
+        <h1>
+          Riddles
+        </h1>
+      </div>
+      <div className="pt-5 d-flex justify-content-center">
+        <DisplayQuestion question={riddles[count].question}/>
+      </div>
+      <div className="pt-5 d-flex justify-content-center">
+        <AnswerField lettersGuessed={lettersGuessed} unselectLetter={unselectLetter}/>
+      </div>
+      <div className="pt-5 d-flex flex-column align-items-center">
+        <ImShuffle id="shuffle-icon" onClick={shuffleChoiceTiles}/>
+        <LetterTiles letterChoices={letterChoices} selectLetter={selectLetter} />        
+      </div>
+      <div className="pt-3 d-flex justify-content-center">
+        <button className="btn btn-info" onClick={saveUserData()}>
+          Press
+        </button>
+      </div>
+    </div>
   )
 }
 

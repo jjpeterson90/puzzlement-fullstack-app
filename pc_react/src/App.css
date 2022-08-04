@@ -1,7 +1,47 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+}
+
+#display-question {
+  text-align: center;
+  width: 80%;
+  font-size: 2rem;
+}
+
+#shuffle-icon {
+  height: 30px;
+  width: auto;
+}
+
+#ltr0, #ltr1, #ltr2, #ltr3, #ltr4, #ltr5, #ltr6, #ltr7,
+#ltr8, #ltr9, #ltr10, #ltr11, #ltr12, #ltr13, #ltr14, #ltr15 {
+  height: 39px;
+  width: 39px;
+  margin: .30rem .13rem .30rem .13rem;
+  padding: 0;
+  border-radius: 8px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: green;
+}
+
+.ans-tile {
+  height: 40px;
+  width: 40px;
+  padding-top: 0.5%;
+  margin-inline: .1rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  vertical-align: middle;
+  border-radius: 10px;
+  background-color: rgb(43, 43, 43);
+  color: white;
+  
+}
+.ans-tile:hover {
+  cursor: pointer;
 }
 
 /* .logo {
@@ -38,23 +78,3 @@
 .read-the-docs {
   color: #888;
 } */
-
-.tile {
-  height: 40px;
-  width: 40px;
-  /* font-size: 30px; */
-}
-
-.ans-tile {
-  height: 35px;
-  width: 35px;
-  text-align: center;
-  font-size: 1.3rem;
-  vertical-align: middle;
-  background-color: rgb(43, 43, 43);
-  color: white;
-  
-}
-.ans-tile:hover {
-  cursor: pointer;
-}

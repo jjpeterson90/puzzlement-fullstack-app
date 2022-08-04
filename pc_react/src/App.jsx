@@ -65,14 +65,17 @@ function App() {
   }, [])
 
   return (
-    <Router>
-      <Routes>
-        <Route exact path='/' element={ 
-          <HomePage handleLoginForm={handleLoginForm} handleLogout={handleLogout} user={user}/> 
-        } />
-        <Route path='/riddles' element={ <Riddles /> } />
-      </Routes>
-    </Router>
+    <section className="p-0">
+      <Router>
+        <Routes>
+          <Route exact path='/' element={ 
+            <HomePage handleLoginForm={handleLoginForm} handleLogout={handleLogout} user={user}/> 
+          } />
+          <Route path='/riddles' element={ <Riddles /> } />
+        </Routes>
+      </Router>      
+    </section>
+
   );
 }
 

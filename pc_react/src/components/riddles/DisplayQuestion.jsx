@@ -3,9 +3,9 @@
 function DisplayQuestion( {question} ) {
 
   return (
-    <section>
-      <h4>{question}</h4>
-    </section>
+    <div id="display-question">
+      {question}
+    </div>
   )
 }
 
