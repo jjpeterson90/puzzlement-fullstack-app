@@ -14,6 +14,11 @@
   width: auto;
 }
 
+#letter-choices-container {
+  width: 310px;
+  height:auto;
+}
+
 #ltr0, #ltr1, #ltr2, #ltr3, #ltr4, #ltr5, #ltr6, #ltr7,
 #ltr8, #ltr9, #ltr10, #ltr11, #ltr12, #ltr13, #ltr14, #ltr15 {
   height: 39px;

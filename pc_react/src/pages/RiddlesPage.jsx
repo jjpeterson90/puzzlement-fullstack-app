@@ -1,39 +1,80 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 // components
-import DisplayQuestion from '../components/riddles/DisplayQuestion'
 import AnswerField from '../components/riddles/AnswerField'
+import RiddleOptions from '../components/riddles/RiddleOptions'
 import LetterTiles from '../components/riddles/LetterTiles'
 // data
 import riddlelist from '../data/riddlelist.json'
 // bootstrap icons
 import { ImShuffle } from 'react-icons/im'
+// axios
+import axios from 'axios'
 
 
 function Riddles() {
 
+  let firstRender = useRef(true)
+
   const [ riddles, setRiddles ] = useState(riddlelist)
   const [ count, setCount ] = useState(0)
   const [ lettersGuessed, setLettersGuessed ] = useState(getLettersGuessed())
-  const [ letterChoices, setLetterChoices ] = useState(getLetterChoices())
+  const [ letterChoices, setLetterChoices ] = useState([])
+
+  useEffect( () => {
+    load_save_data()
+  }, [])
 
   useEffect( () => {
     checkForWin()
   }, [lettersGuessed])
 
-  function getLetterChoices() {
-      let list = riddles[count].answer.toUpperCase().split('')
-      const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-      while (list.length < 14) {
-        list.push(alphabet.charAt(Math.floor(Math.random()*alphabet.length)))
-      }
-      // return list
-      return shuffleArray(list)
+  useEffect( () => {
+    if (!firstRender.current) {
+      save_data()
+    }
+  }, [letterChoices])
+
+  async function save_data() {
+    const data = {
+      riddle_number: count,
+      riddle_letter_choices: letterChoices.join('')
+    }
+    await axios.post('/save', data).then(response => {
+      console.log('data saved. response: ', response)
+    })
   }
 
+  async function load_save_data() {
+    await axios.get('/loadsave').then(response => {
+      if (!response.data['fail']) {
+        const save_data = response.data[0].fields
+        setCount(save_data['riddle_number'])
+        setLetterChoices(save_data['riddle_letter_choices'].split(''))
+      } else {
+        getLetterChoices()
+      }
+    })
+  }
+
+  function getLetterChoices() {
+    let list = riddles[count].answer.toUpperCase().split('')
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    while (list.length < 14) {
+      list.push(alphabet.charAt(Math.floor(Math.random()*alphabet.length)))
+    }
+    // make object list
+    const newList = shuffleArray(list)
+    setLetterChoices(newList)
+    firstRender.current = false
+  }
+
+  // const listObject = Object.assign({}, letterChoices)
+  // console.log('listObject: ', listObject)
+
+
+
   function getLettersGuessed() {
-    let list = riddles[count].answer.toUpperCase().replace(/[A-Z]/g,'_').split('')
-    let newList = list.map( (elem) => { return [elem, undefined] })
-    return newList
+    return new Array(riddles[count].answer.length).fill('')
   }
 
   function shuffleArray(array) {
@@ -47,34 +88,10 @@ function Riddles() {
     return array;
   }
 
-  function selectLetter(event) {
-    for (let i = 0; i < lettersGuessed.length; i++) {
-      if (lettersGuessed[i][1] === undefined) {
-        let thisTile = document.getElementById(event.target.id)
-        thisTile.style.visibility = 'hidden'
-        let list = [...lettersGuessed]
-        list[i] = [event.target.value, event.target.id]
-        setLettersGuessed(list)
-        return
-      }
-    }
-  }
-
-  function unselectLetter(event) {
-    if (event.target.textContent !== '_') {
-      let ansIndex = event.target.getAttribute('index')
-      let ltrTile = document.getElementById(event.target.getAttribute('ltrId'))
-      let newList = [...lettersGuessed]
-      newList[ansIndex] = ['_', undefined]
-      setLettersGuessed(newList)
-      ltrTile.style.visibility = 'visible'
-    }
-  }
-
   function checkForWin() {
     const solution = riddles[count].answer.toUpperCase()
-    const user_answer = lettersGuessed.map((elem) => {
-      if (elem[0].match(/[A-Z]/)) return elem[0]
+    const user_answer = lettersGuessed.map((letter) => {
+      if (letter.match(/[A-Z]/)) return letter
     }).join('')
     const answerTiles = document.querySelectorAll('.ans-tile')
 
@@ -94,16 +111,6 @@ function Riddles() {
     })
   }
 
-  const shuffleChoiceTiles = () => {
-    console.log('shuffling')
-    let newChoices = shuffleArray(letterChoices)
-    setLetterChoices([...newChoices])
-  }
-
-  function saveUserData() {
-    
-  }
-
   return (
     <div className="container p-0">
       <div className="text-center">
@@ -112,19 +119,33 @@ function Riddles() {
         </h1>
       </div>
       <div className="pt-5 d-flex justify-content-center">
-        <DisplayQuestion question={riddles[count].question}/>
+        <div id="display-question">
+          {riddles[count].question}
+        </div>
       </div>
       <div className="pt-5 d-flex justify-content-center">
-        <AnswerField lettersGuessed={lettersGuessed} unselectLetter={unselectLetter}/>
+        <AnswerField 
+          lettersGuessed={lettersGuessed}
+          setLettersGuessed={setLettersGuessed}
+          letterChoices={letterChoices}
+          setLetterChoices={setLetterChoices}
+        />
       </div>
-      <div className="pt-5 d-flex flex-column align-items-center">
-        <ImShuffle id="shuffle-icon" onClick={shuffleChoiceTiles}/>
-        <LetterTiles letterChoices={letterChoices} selectLetter={selectLetter} />        
+      <div className="py-4 d-flex justify-content-center">
+        <RiddleOptions
+          letterChoices={letterChoices}
+          setLetterChoices={setLetterChoices}
+          lettersGuessed={lettersGuessed}
+          shuffleArray={shuffleArray}
+        />
       </div>
-      <div className="pt-3 d-flex justify-content-center">
-        <button className="btn btn-info" onClick={saveUserData()}>
-          Press
-        </button>
+      <div className="d-flex flex-column align-items-center">
+        <LetterTiles 
+          lettersGuessed={lettersGuessed} 
+          setLettersGuessed={setLettersGuessed} 
+          letterChoices={letterChoices}
+          setLetterChoices={setLetterChoices}
+        />        
       </div>
     </div>
   )

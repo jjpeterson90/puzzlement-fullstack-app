@@ -55,7 +55,7 @@ function App() {
 
   const whoAmI = async () => {
     const response = await axios.get('/whoami')
-    console.log('whoami response: ', response.data)
+    console.log('whoami: ', response.data)
     setUser(response.data['user'])
   }
 
