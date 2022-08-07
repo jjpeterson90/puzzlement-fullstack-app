@@ -7,7 +7,7 @@ export default defineConfig({
   build: {
     outDir: '../pc_django/static',
     emptyOutDir: true,
-    sourcemap: true,
+      sourcemap: true,
   },
   plugins: [react()]
 })

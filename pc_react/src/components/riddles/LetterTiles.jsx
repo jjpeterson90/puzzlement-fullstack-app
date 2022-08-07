@@ -1,41 +1,47 @@
+import { useEffect } from "react"
 import Button from "react-bootstrap/Button"
 
-function LetterTiles( {lettersGuessed, setLettersGuessed, letterChoices, setLetterChoices} ) {
-
-  const half = letterChoices.length / 2
-  const row1 = letterChoices.slice(0,half)
-  const row2 = letterChoices.slice(half)
+function LetterTiles( {lettersGuessed, setLettersGuessed, letterChoices} ) {
 
   function selectLetter(event) {
     for (let i = 0; i < lettersGuessed.length; i++) {
-      if (!lettersGuessed[i]) {
-        let newLettersGuessed = [...lettersGuessed]
-        let newLetterChoices = [...letterChoices]
-        const ltrTile = document.getElementById(event.target.id)
-        const ansTile = document.getElementById(`ans${i}`)
-        ltrTile.style.visibility = 'hidden'
-        ansTile.dataset.id = event.target.id
-        newLettersGuessed[i] = event.target.value
-        newLetterChoices[event.target.dataset.id] = ''
+      if (lettersGuessed[i][0] == '') {
+        let newLettersGuessed = JSON.parse(JSON.stringify(lettersGuessed))
+        newLettersGuessed[i][0] = event.target.dataset.id
+        newLettersGuessed[i][1] = event.target.value
         setLettersGuessed(newLettersGuessed)
-        setLetterChoices(newLetterChoices)
         return
       }
     }
   }
+
+  // Determines visibility of chosen and unchosen letter tiles
+  useEffect(() => {
+    if (letterChoices && lettersGuessed) {
+      letterChoices.forEach(letter => {
+        let letterTile = document.getElementById('ltr'+letter[0])
+        let chosen = false
+        lettersGuessed.forEach(guessed => {
+          if (letter[0] === guessed[0]) chosen = true
+        })
+        if (chosen) letterTile.style.visibility = 'hidden'
+        else letterTile.style.visibility = 'visible'
+      })
+    }
+  })
   
   return (
       <div className="d-flex flex-wrap justify-content-center" id="letter-choices-container">
-        { letterChoices.map((letter, index) => {
+        { 
+          letterChoices.map((elem) => {
             return (
               <Button 
-                id={`ltr${index}`}
-                data-id={index}
-                value={letter}
+                id={`ltr${elem[0]}`}
+                data-id={elem[0]}
+                value={elem[1]}
                 onClick={(e) => selectLetter(e)}
-                style={{ visibility: letter ? 'visible' : 'hidden'}}
               >
-                {letter}
+                {elem[1]}
               </Button>
             )
           })

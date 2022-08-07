@@ -16,10 +16,15 @@ function PuzzlesHome( {handleLogout} ) {
       <h1 className="mb-5">
         Puzzle Challenge
       </h1>
-      <div className="d-flex justify-content-center">
+      <div className="d-flex justify-content-around">
         <Button variant="success">
           <Link to={'/riddles'} className="text-decoration-none text-white">
             Riddles
+          </Link>
+        </Button>
+        <Button variant="success">
+          <Link to={'/imageslider'} className="text-decoration-none text-white">
+            Image-Slider
           </Link>
         </Button>
       </div>

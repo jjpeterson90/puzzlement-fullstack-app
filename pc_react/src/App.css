@@ -9,10 +9,11 @@
   font-size: 2rem;
 }
 
-#shuffle-icon {
-  height: 30px;
+.riddle-icon {
+  height: 35px;
   width: auto;
 }
+
 
 #letter-choices-container {
   width: 310px;
@@ -48,6 +49,15 @@
 .ans-tile:hover {
   cursor: pointer;
 }
+
+.riddle-win{
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0%;
+  background-color: rgba(0,0,0,.9);
+}
+
 
 /* .logo {
   height: 6em;

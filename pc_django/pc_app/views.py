@@ -96,7 +96,7 @@ def load_save_data(request):
       data = serializers.serialize("json", [user_save_data])
       return HttpResponse(data)
     except:
-      return JsonResponse({'fail':True})
+      return JsonResponse({'fail': True})
 
 
 @api_view(['POST'])
@@ -114,4 +114,8 @@ def save_data(request):
       if 'riddle_letter_choices' in request.data:
         user_save_data.riddle_letter_choices = request.data['riddle_letter_choices']
         user_save_data.save(update_fields=['riddle_letter_choices'])
-      return JsonResponse({'success':True})
+      return JsonResponse({
+        'success': True,
+        'riddle_number': user_save_data.riddle_number,
+        'riddle_letter_choices': user_save_data.riddle_letter_choices,
+      })

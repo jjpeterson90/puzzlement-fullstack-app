@@ -1,30 +1,24 @@
 
 
-function AnswerField( {lettersGuessed, setLettersGuessed, letterChoices, setLetterChoices} ) {
+function AnswerField( {lettersGuessed, setLettersGuessed, letterChoices} ) {
 
   function unselectLetter(event) {
     if (event.target.textContent !== '_') {
-      let newGuessedList = [...lettersGuessed]
-      let newChoicesList = [...letterChoices]
-      const ansTileId = event.target.id
-      const ansIndex = event.target.dataset.index
-      const ltrTile = document.getElementById(event.target.dataset.id)
-      const ltrIndex = ltrTile.dataset.id
-      newChoicesList[ltrIndex] = event.target.textContent
-      newGuessedList[ansIndex] = ''
-      ltrTile.style.visibility = 'visible'
-      setLetterChoices(newChoicesList)
-      setLettersGuessed(newGuessedList)
+      let newLettersGuessed = JSON.parse(JSON.stringify(lettersGuessed))
+      const index = event.target.dataset.index
+      newLettersGuessed[index][0] = ''
+      newLettersGuessed[index][1] = ''
+      setLettersGuessed(newLettersGuessed)
     }
   }
 
   return (
     <div className="d-flex">
-      {
+      { lettersGuessed &&
         lettersGuessed.map((elem, index) => {
           return (
-            <div className="ans-tile" value={elem} id={`ans${index}`} data-index={index} onClick={(e) => unselectLetter(e)}>
-              { elem ? elem : '_' }
+            <div className="ans-tile" id={`ans${index}`} data-index={index} onClick={(e) => unselectLetter(e)}>
+              { elem[1] ? elem[1] : '_' }
             </div>
           )
         })

@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react'
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import axios from 'axios';
 import HomePage from './pages/HomePage'
-import Riddles from './pages/RiddlesPage'
+import RiddlesPage from './pages/RiddlesPage'
+import ImageSliderPage from './pages/ImageSliderPage'
 
 const getCSRFToken = () => {
   let csrfToken
@@ -71,7 +72,8 @@ function App() {
           <Route exact path='/' element={ 
             <HomePage handleLoginForm={handleLoginForm} handleLogout={handleLogout} user={user}/> 
           } />
-          <Route path='/riddles' element={ <Riddles /> } />
+          <Route path='/riddles' element={ <RiddlesPage /> } />
+          <Route path='/imageslider' element={ <ImageSliderPage />} />
         </Routes>
       </Router>      
     </section>

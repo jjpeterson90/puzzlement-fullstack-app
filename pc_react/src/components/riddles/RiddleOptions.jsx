@@ -1,20 +1,20 @@
 import { useEffect } from 'react'
-import { ImShuffle } from 'react-icons/im'
+import { IoMdShuffle, IoMdRefresh } from 'react-icons/io'
 
-function RiddleOptions( {letterChoices, setLetterChoices, lettersGuessed, shuffleArray} ) {
+function RiddleOptions( {letterChoices, setLetterChoices, lettersGuessed, shuffleArray, resetLettersGuessed} ) {
 
-  useEffect( () => {
-
-  }, [lettersGuessed])
-
-  const shuffleChoiceTiles = () => {
+  const shuffleLetterChoiceTiles = () => {
     console.log('shuffling')
     let newChoices = shuffleArray(letterChoices)
-    setLetterChoices([...newChoices])
+    console.log('new choices: ', newChoices)
+    setLetterChoices(newChoices)
   }
 
   return (
-    <ImShuffle id="shuffle-icon" onClick={shuffleChoiceTiles}/>
+    <>
+      <IoMdShuffle className="riddle-icon" onClick={shuffleLetterChoiceTiles}/>
+      <IoMdRefresh className="riddle-icon" onClick={() => resetLettersGuessed()}/>
+    </>
   )
 }
 

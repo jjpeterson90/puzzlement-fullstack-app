@@ -1,97 +1,137 @@
 import { useState, useEffect, useRef } from 'react'
+import {Link} from 'react-router-dom'
+import Button from 'react-bootstrap/Button'
+import axios from 'axios'
 // components
 import AnswerField from '../components/riddles/AnswerField'
 import RiddleOptions from '../components/riddles/RiddleOptions'
 import LetterTiles from '../components/riddles/LetterTiles'
+import PuzzleWin from '../components/riddles/PuzzleWin'
 // data
 import riddlelist from '../data/riddlelist.json'
-// bootstrap icons
-import { ImShuffle } from 'react-icons/im'
-// axios
-import axios from 'axios'
 
 
-function Riddles() {
+function RiddlesPage() {
 
   let firstRender = useRef(true)
 
   const [ riddles, setRiddles ] = useState(riddlelist)
   const [ count, setCount ] = useState(0)
-  const [ lettersGuessed, setLettersGuessed ] = useState(getLettersGuessed())
-  const [ letterChoices, setLetterChoices ] = useState([])
+  const [ lettersGuessed, setLettersGuessed ] = useState(false)
+  const [ letterChoices, setLetterChoices ] = useState(false)
+  const [ win, setWin ] = useState(false)
 
   useEffect( () => {
     load_save_data()
   }, [])
-
+  
   useEffect( () => {
-    checkForWin()
+    if (!firstRender.current) {
+      checkForWin()
+    }
   }, [lettersGuessed])
 
   useEffect( () => {
-    if (!firstRender.current) {
+    if (!firstRender.current){
       save_data()
+      console.log('saved')
     }
   }, [letterChoices])
 
-  async function save_data() {
+  useEffect( () => {
+    if (win === true) {
+      if (!firstRender.current) {
+        resetLettersGuessed()
+        makeNewLetterChoices()
+        setWin(false)
+      }
+    }
+  }, [count])
+
+  function save_data() {
+    const letterChoicesAsString = [].concat(...letterChoices).join('')
     const data = {
       riddle_number: count,
-      riddle_letter_choices: letterChoices.join('')
+      riddle_letter_choices: letterChoicesAsString
     }
-    await axios.post('/save', data).then(response => {
-      console.log('data saved. response: ', response)
+    axios.post('/save', data).then(response => {
+      console.log('data saved: ', response)
     })
   }
 
-  async function load_save_data() {
-    await axios.get('/loadsave').then(response => {
+  function load_save_data() {
+    console.log('load save count: ', count)
+    axios.get('/loadsave').then(response => {
       if (!response.data['fail']) {
         const save_data = response.data[0].fields
+        console.log('loading save data: ', save_data)
+        let savedLetterChoices = rebuildNestedArrayFromString(save_data['riddle_letter_choices'])
         setCount(save_data['riddle_number'])
-        setLetterChoices(save_data['riddle_letter_choices'].split(''))
+        resetLettersGuessed(save_data['riddle_number'])
+        setLetterChoices(savedLetterChoices)
+        firstRender.current = false
       } else {
-        getLetterChoices()
+        console.log('no save data, making new letter choices')
+        resetLettersGuessed()
+        makeNewLetterChoices()
+        firstRender.current = false
       }
     })
   }
 
-  function getLetterChoices() {
+  function rebuildNestedArrayFromString(str) {
+    let index = 0
+    let arr = []
+    for (let i = 0; i < str.length; i++) {
+      if (str[i].match(/\d/)) {
+        if (arr[index]) arr[index][0] += str[i]
+        else arr[index] = [str[i]]
+      } else {
+        arr[index][1] = str[i]
+        index += 1
+      }
+    }
+    return arr
+  }
+
+  function makeNewLetterChoices() {
     let list = riddles[count].answer.toUpperCase().split('')
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     while (list.length < 14) {
       list.push(alphabet.charAt(Math.floor(Math.random()*alphabet.length)))
     }
-    // make object list
-    const newList = shuffleArray(list)
+    const listWithLetterIDs = list.map((letter, index) => {
+      return [index.toString(), letter]
+    })
+    const newList = shuffleArray(listWithLetterIDs)
     setLetterChoices(newList)
     firstRender.current = false
+    console.log('finished updating letter choices')
   }
 
-  // const listObject = Object.assign({}, letterChoices)
-  // console.log('listObject: ', listObject)
-
-
-
-  function getLettersGuessed() {
-    return new Array(riddles[count].answer.length).fill('')
+  function resetLettersGuessed(num = count) {
+    const freshArray = new Array(riddles[num].answer.length).fill(['',''])
+    setLettersGuessed(freshArray)
+    console.log('letters guessed finished resetting')
   }
 
   function shuffleArray(array) {
-    let currentIndex = array.length, randomIndex;
+    let newArray = JSON.parse(JSON.stringify(array))
+    console.log('new array: ', newArray)
+    let currentIndex = newArray.length, randomIndex;
     while (currentIndex != 0) {
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
+      [newArray[currentIndex], newArray[randomIndex]] = [
+        newArray[randomIndex], newArray[currentIndex]];
     }
-    return array;
+    return newArray;
   }
 
   function checkForWin() {
     const solution = riddles[count].answer.toUpperCase()
-    const user_answer = lettersGuessed.map((letter) => {
-      if (letter.match(/[A-Z]/)) return letter
+    const user_answer = lettersGuessed.map((elem) => {
+      if (elem[1].match(/[A-Z]/)) return elem[1]
     }).join('')
     const answerTiles = document.querySelectorAll('.ans-tile')
 
@@ -100,7 +140,9 @@ function Riddles() {
       if (user_answer.length === solution.length) {
         if (solution === user_answer) {
           element.style.color = 'rgb(0,220,0)'
-          // redirect to win screen
+          setTimeout( () => {
+            setWin(true)
+          }, 300)
         } else {
           element.style.color = 'rgb(255,130,0)'
         }
@@ -112,45 +154,65 @@ function Riddles() {
   }
 
   return (
-    <div className="container p-0">
-      <div className="text-center">
-        <h1>
-          Riddles
-        </h1>
-      </div>
-      <div className="pt-5 d-flex justify-content-center">
-        <div id="display-question">
-          {riddles[count].question}
+    <div className="container p-0 position-relative">
+      <Button variant="primary">
+        <Link to={'/'} className="text-decoration-none text-white">
+          Home
+        </Link>
+      </Button>
+      { letterChoices ?
+        <>
+          <div className="text-center">
+            <h1>
+              Riddles
+            </h1>
+          </div>
+          <div className="pt-5 d-flex justify-content-center">
+            <div id="display-question">
+              {riddles[count].question}
+            </div>
+          </div>
+          <div className="pt-5 d-flex justify-content-center">
+            <AnswerField 
+              lettersGuessed={lettersGuessed}
+              setLettersGuessed={setLettersGuessed}
+              letterChoices={letterChoices}
+            />
+          </div>
+          <div className="py-4 d-flex justify-content-center">
+            <RiddleOptions
+              letterChoices={letterChoices}
+              setLetterChoices={setLetterChoices}
+              lettersGuessed={lettersGuessed}
+              shuffleArray={shuffleArray}
+              resetLettersGuessed={resetLettersGuessed}
+            />
+          </div>
+          <div className="d-flex flex-column align-items-center">
+            <LetterTiles 
+              lettersGuessed={lettersGuessed} 
+              setLettersGuessed={setLettersGuessed} 
+              letterChoices={letterChoices}
+            />
+          </div>
+        </>
+        : null
+      }
+      { win ?
+        <div className="riddle-win d-flex flex-column justify-content-center align-items-center">
+          <PuzzleWin
+            answer={riddles[count].answer}
+            count={count}
+            setCount={setCount}
+          />
         </div>
-      </div>
-      <div className="pt-5 d-flex justify-content-center">
-        <AnswerField 
-          lettersGuessed={lettersGuessed}
-          setLettersGuessed={setLettersGuessed}
-          letterChoices={letterChoices}
-          setLetterChoices={setLetterChoices}
-        />
-      </div>
-      <div className="py-4 d-flex justify-content-center">
-        <RiddleOptions
-          letterChoices={letterChoices}
-          setLetterChoices={setLetterChoices}
-          lettersGuessed={lettersGuessed}
-          shuffleArray={shuffleArray}
-        />
-      </div>
-      <div className="d-flex flex-column align-items-center">
-        <LetterTiles 
-          lettersGuessed={lettersGuessed} 
-          setLettersGuessed={setLettersGuessed} 
-          letterChoices={letterChoices}
-          setLetterChoices={setLetterChoices}
-        />        
-      </div>
+        :
+        null
+      }
     </div>
   )
 }
 
-export default Riddles
+export default RiddlesPage
 
 
