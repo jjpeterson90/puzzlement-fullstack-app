@@ -1,6 +1,5 @@
 
-function isSolvable(tiles) {
-  console.log('is solvable tiles: ', tiles)
+export function isSolvable(tiles) {
   let inversions = 0
   for (let i = 0; i <= tiles.length - 1; i++) {
     for (let j = i + 1; j <= tiles.length; j++) {
@@ -10,7 +9,9 @@ function isSolvable(tiles) {
     }
   }
   let grid_size = Math.sqrt(tiles.length)
-  if (grid_size % 2 != inversions % 2) {
+  if (inversions == 0) {
+    return true
+  } else if (grid_size % 2 != inversions % 2) {
     return false
   } else if (grid_size % 2 == 0 && ((inversions + tiles.indexOf(0)) % 2 == 1)) {
     return false
@@ -20,7 +21,6 @@ function isSolvable(tiles) {
 }
 
 export function isSolved(tiles) {
-  console.log('is solved tiles: ', tiles)
   for (let i = 0; i < tiles.length; i++) {
     if (tiles[i] !== i) {
       return false
@@ -30,7 +30,6 @@ export function isSolved(tiles) {
 }
 
 export function shuffle(tiles) {
-  console.log('shuffling')
   let newTiles = [...tiles]
   let currentIndex = newTiles.length
   let randomIndex;
@@ -39,7 +38,6 @@ export function shuffle(tiles) {
     currentIndex--;
     [newTiles[currentIndex], newTiles[randomIndex]] = [newTiles[randomIndex], newTiles[currentIndex]];
   }
-  console.log('shuffled tiles: ', newTiles)
   return isSolvable(newTiles) && !isSolved(newTiles) ?
     newTiles : shuffle(newTiles)
 }

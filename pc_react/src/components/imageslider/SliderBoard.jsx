@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 // Helpers
-import { BOARD_SIZE, GRID_SIZE, TILE_COUNT } from './constants'
-import { shuffle, canSlide, swapTiles, isSolved } from './helperfunctions'
+// import { BOARD_SIZE, GRID_SIZE, TILE_COUNT } from './constants'
+import { getDifficultyConstants } from './constants';
+import { shuffle, canSlide, swapTiles, isSolved, isSolvable } from './helperfunctions'
 // Components
 import Tile from './Tile'
 // Bootstrap & Icons
@@ -9,7 +10,9 @@ import Button from 'react-bootstrap/Button';
 import { IoMdShuffle, IoMdRefresh } from 'react-icons/io'
 import { ImSpinner9 } from 'react-icons/im'
 
-function SliderBoard( {imageURL, handleNewGameClick } ) {
+function SliderBoard( {imageURL, handleNewGameClick, difficulty } ) {
+
+  const { BOARD_SIZE, GRID_SIZE, TILE_COUNT } = getDifficultyConstants(difficulty)
 
   const [ tiles, setTiles ] = useState([...Array(TILE_COUNT).keys()])
   const [ started, setStarted ] = useState(false)
@@ -20,6 +23,11 @@ function SliderBoard( {imageURL, handleNewGameClick } ) {
     width: BOARD_SIZE,
     height: BOARD_SIZE,
   }
+
+  useEffect( () => {
+    setStarted(false)
+    setTiles([...Array(TILE_COUNT).keys()])
+  }, [imageURL])
 
   const slideTile = (tileIndex) => {
     const src = tileIndex
@@ -67,6 +75,7 @@ function SliderBoard( {imageURL, handleNewGameClick } ) {
                 width={tileWidth}
                 height={tileHeight}
                 imageURL={imageURL}
+                difficulty={difficulty}
                 handleTileClick={handleTileClick}
               />
             )) }
@@ -78,11 +87,17 @@ function SliderBoard( {imageURL, handleNewGameClick } ) {
               <ImSpinner9 id="loading-spinner"/>
             </div> }
       { !started && imageURL ?
-        <Button onClick={() => handleStartClick()}>Start Game</Button>
+        <>
+          <Button onClick={() => handleStartClick()}>Start Game</Button>
+        </>
         : null }
-      { winner && started ?
+      { started && imageURL ?
         <Button onClick={handleNewGameClick}>New Game</Button>
-        : null}
+        : 
+        <Button 
+          onClick={handleNewGameClick}
+          disabled={imageURL ? false : true}
+        >New Image</Button> }
     </>
   )
 }

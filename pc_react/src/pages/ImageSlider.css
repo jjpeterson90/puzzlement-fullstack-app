@@ -3,6 +3,11 @@
   padding: 0;
 }
 
+.board-container {
+  min-height: 240px;
+  justify-content: center;
+}
+
 .tile {
   position: absolute;
   display: grid;

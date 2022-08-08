@@ -1,10 +1,12 @@
 import { Motion, spring } from 'react-motion'
-import { BOARD_SIZE, GRID_SIZE, TILE_COUNT } from './constants'
+import { getDifficultyConstants } from './constants'
 import { getGridPosition, getActualPosition, getBackgroundPosition } from './helperfunctions'
+
 
 function Tile(props) {
 
-  const { index, tile, width, height, imageURL, handleTileClick } = props
+  const { index, tile, width, height, imageURL, difficulty, handleTileClick } = props
+  const { BOARD_SIZE, GRID_SIZE, TILE_COUNT } = getDifficultyConstants(difficulty)
 
   const { row, col } = getGridPosition(index, GRID_SIZE)
   const actualPosition = getActualPosition(row, col, width, height)
@@ -31,7 +33,6 @@ function Tile(props) {
           style = {{
             ...tileStyle,
             transform: `translate3d(${translateX}px, ${translateY}px, 0)`,
-            //last tile?
             opacity: tile ? 1 : 0,
           }}
           className="tile"

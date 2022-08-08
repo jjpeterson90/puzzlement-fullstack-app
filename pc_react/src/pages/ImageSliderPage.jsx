@@ -5,22 +5,27 @@ import './ImageSlider.css'
 import Button from 'react-bootstrap/Button'
 // Components
 import SliderBoard from '../components/imageslider/SliderBoard'
-import { BOARD_SIZE, GRID_SIZE, TILE_COUNT } from '../components/imageslider/constants'
+import { getDifficultyConstants } from '../components/imageslider/constants'
+import DifficultySelector from '../components/imageslider/DifficultySelector';
 // API
 import { ImageAPI } from '../components/api/ImageAPI'
+import { flexbox } from '@mui/system';
 
 
 function ImageSliderPage() {
 
-  const [imageURL, setImageURL] = useState('')
+  const [ imageURL, setImageURL ] = useState('')
+  const [ difficulty, setDifficulty ] = useState('easy')
+
+  const { BOARD_SIZE, GRID_SIZE, TILE_COUNT } = getDifficultyConstants(difficulty)
 
   useEffect( () => {
     getNewImage()
   }, [])
 
-  async function getNewImage() {
-    const url = await ImageAPI(BOARD_SIZE)
-    console.log('have url: ', url)
+  async function getNewImage(imgID=null) {
+    setImageURL('')
+    const url = await ImageAPI(BOARD_SIZE, imgID)
     setImageURL(await url)
   }
 
@@ -28,10 +33,19 @@ function ImageSliderPage() {
     getNewImage()
   }
 
-  console.log('url status: ', imageURL)
+  const getBoardContainerStyle = {
+    height: BOARD_SIZE,
+  }
 
   return (
     <div className="App">
+      <DifficultySelector 
+        difficulty={difficulty}
+        setDifficulty={setDifficulty}
+        imageURL={imageURL}
+        setImageURL={setImageURL}
+        getNewImage={getNewImage}
+      />
       <Link to={'/'} className="text-decoration-none text-white">
         <Button variant="primary">
           Home
@@ -40,7 +54,13 @@ function ImageSliderPage() {
       <h1>
         Image Slider
       </h1>
-      <SliderBoard imageURL={imageURL} handleNewGameClick={handleNewGameClick}/>
+      <div className="App" style={getBoardContainerStyle}>
+        <SliderBoard 
+          imageURL={imageURL}
+          handleNewGameClick={handleNewGameClick}
+          difficulty={difficulty}
+        />
+      </div>
     </div>
   )
 }
