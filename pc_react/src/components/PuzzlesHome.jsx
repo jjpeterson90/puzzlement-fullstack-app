@@ -17,16 +17,16 @@ function PuzzlesHome( {handleLogout} ) {
         Puzzle Challenge
       </h1>
       <div className="d-flex justify-content-around">
-        <Button variant="success">
-          <Link to={'/riddles'} className="text-decoration-none text-white">
-            Riddles
-          </Link>
-        </Button>
-        <Button variant="success">
-          <Link to={'/imageslider'} className="text-decoration-none text-white">
+        <Link to={'/riddles'} className="text-decoration-none text-white">
+          <Button variant="success">
+          Riddles
+          </Button>
+        </Link>
+        <Link to={'/imageslider'} className="text-decoration-none text-white">
+          <Button variant="success">
             Image-Slider
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </div>
     </div>
   );

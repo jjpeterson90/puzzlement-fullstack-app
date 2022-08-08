@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import {Link} from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
 import axios from 'axios'
+// Styling
+import './Riddles.css'
 // components
 import AnswerField from '../components/riddles/AnswerField'
 import RiddleOptions from '../components/riddles/RiddleOptions'
@@ -118,7 +120,8 @@ function RiddlesPage() {
   function shuffleArray(array) {
     let newArray = JSON.parse(JSON.stringify(array))
     console.log('new array: ', newArray)
-    let currentIndex = newArray.length, randomIndex;
+    let currentIndex = newArray.length
+    let randomIndex
     while (currentIndex != 0) {
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
@@ -155,11 +158,11 @@ function RiddlesPage() {
 
   return (
     <div className="container p-0 position-relative">
-      <Button variant="primary">
-        <Link to={'/'} className="text-decoration-none text-white">
+      <Link to={'/'} className="text-decoration-none text-white">
+        <Button variant="primary">
           Home
-        </Link>
-      </Button>
+        </Button>
+      </Link>
       { letterChoices ?
         <>
           <div className="text-center">
