@@ -2,22 +2,21 @@ import { useState, useEffect, useRef } from 'react'
 import {Link} from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
 import axios from 'axios'
-// Styling
-import './Riddles.css'
+import './css/Riddles.css'
 // components
 import AnswerField from '../components/riddles/AnswerField'
 import RiddleOptions from '../components/riddles/RiddleOptions'
 import LetterTiles from '../components/riddles/LetterTiles'
 import PuzzleWin from '../components/riddles/PuzzleWin'
 // data
-import riddlelist from '../data/riddlelist.json'
+import riddles from '../data/riddlelist.json'
 
 
 function RiddlesPage() {
 
   let firstRender = useRef(true)
 
-  const [ riddles, setRiddles ] = useState(riddlelist)
+  // const [ riddles, setRiddles ] = useState(riddlelist)
   const [ count, setCount ] = useState(0)
   const [ lettersGuessed, setLettersGuessed ] = useState(false)
   const [ letterChoices, setLetterChoices ] = useState(false)
@@ -36,7 +35,6 @@ function RiddlesPage() {
   useEffect( () => {
     if (!firstRender.current){
       save_data()
-      console.log('saved')
     }
   }, [letterChoices])
 
@@ -62,18 +60,15 @@ function RiddlesPage() {
   }
 
   function load_save_data() {
-    console.log('load save count: ', count)
     axios.get('/loadsave').then(response => {
       if (!response.data['fail']) {
         const save_data = response.data[0].fields
-        console.log('loading save data: ', save_data)
         let savedLetterChoices = rebuildNestedArrayFromString(save_data['riddle_letter_choices'])
         setCount(save_data['riddle_number'])
         resetLettersGuessed(save_data['riddle_number'])
         setLetterChoices(savedLetterChoices)
         firstRender.current = false
       } else {
-        console.log('no save data, making new letter choices')
         resetLettersGuessed()
         makeNewLetterChoices()
         firstRender.current = false
@@ -108,18 +103,15 @@ function RiddlesPage() {
     const newList = shuffleArray(listWithLetterIDs)
     setLetterChoices(newList)
     firstRender.current = false
-    console.log('finished updating letter choices')
   }
 
   function resetLettersGuessed(num = count) {
     const freshArray = new Array(riddles[num].answer.length).fill(['',''])
     setLettersGuessed(freshArray)
-    console.log('letters guessed finished resetting')
   }
 
   function shuffleArray(array) {
     let newArray = JSON.parse(JSON.stringify(array))
-    console.log('new array: ', newArray)
     let currentIndex = newArray.length
     let randomIndex
     while (currentIndex != 0) {

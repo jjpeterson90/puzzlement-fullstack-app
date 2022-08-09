@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react'
-// Helpers
-// import { BOARD_SIZE, GRID_SIZE, TILE_COUNT } from './constants'
+import axios from 'axios';
 import { getDifficultyConstants } from './constants';
-import { shuffle, canSlide, swapTiles, isSolved, isSolvable } from './helperfunctions'
+import { shuffle, canSlide, swapTiles, isSolved } from './helperfunctions'
 // Components
 import Tile from './Tile'
 // Bootstrap & Icons
 import Button from 'react-bootstrap/Button';
-import { IoMdShuffle, IoMdRefresh } from 'react-icons/io'
+import { IoMdShuffle } from 'react-icons/io'
 import { ImSpinner9 } from 'react-icons/im'
 
 function SliderBoard( {imageURL, handleNewGameClick, difficulty } ) {
@@ -27,7 +26,28 @@ function SliderBoard( {imageURL, handleNewGameClick, difficulty } ) {
   useEffect( () => {
     setStarted(false)
     setTiles([...Array(TILE_COUNT).keys()])
+    if (imageURL) {
+        save_data({
+        image_slider_img: imageURL,
+        image_slider_orientation: tiles,
+        image_slider_difficulty: difficulty,
+        //image_slider_moves: //moves
+      })
+    }
   }, [imageURL])
+
+  useEffect( () => {
+    save_data({
+      image_slider_orientation: tiles,
+      //image_slider_moves: //moves
+    })
+  }, [tiles])
+
+  function save_data(data) {
+    axios.post('/save', data).then(response => {
+      console.log('data saved: ', response)
+    })
+  }
 
   const slideTile = (tileIndex) => {
     const src = tileIndex

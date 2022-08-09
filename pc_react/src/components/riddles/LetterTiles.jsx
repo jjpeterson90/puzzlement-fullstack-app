@@ -31,22 +31,22 @@ function LetterTiles( {lettersGuessed, setLettersGuessed, letterChoices} ) {
   })
   
   return (
-      <div className="d-flex flex-wrap justify-content-center" id="letter-choices-container">
-        { 
-          letterChoices.map((elem) => {
-            return (
-              <Button 
-                id={`ltr${elem[0]}`}
-                data-id={elem[0]}
-                value={elem[1]}
-                onClick={(e) => selectLetter(e)}
-              >
-                {elem[1]}
-              </Button>
-            )
-          })
-        }
-      </div>
+    <div className="d-flex flex-wrap justify-content-center" id="letter-choices-container">
+      { 
+        letterChoices.map((elem) => {
+          return (
+            <Button 
+              id={`ltr${elem[0]}`}
+              data-id={elem[0]}
+              value={elem[1]}
+              onClick={(e) => selectLetter(e)}
+            >
+              {elem[1]}
+            </Button>
+          )
+        })
+      }
+    </div>
   )
 }
 

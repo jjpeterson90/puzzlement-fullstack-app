@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios';
-import './ImageSlider.css'
 import Button from 'react-bootstrap/Button'
+import './css/ImageSlider.css'
 // Components
 import SliderBoard from '../components/imageslider/SliderBoard'
 import { getDifficultyConstants } from '../components/imageslider/constants'
 import DifficultySelector from '../components/imageslider/DifficultySelector';
 // API
 import { ImageAPI } from '../components/api/ImageAPI'
-import { flexbox } from '@mui/system';
 
 
 function ImageSliderPage() {

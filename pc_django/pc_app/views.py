@@ -102,20 +102,33 @@ def load_save_data(request):
 @api_view(['POST'])
 def save_data(request):
   if request.user.is_authenticated:
-    if request.method == 'POST':
-      print('user: ', request.user)
+    if request.method == 'POST':      
       try:
         user_save_data = UserSaveData.objects.get(user_id=request.user)
       except:
-        user_save_data = UserSaveData.objects.create(user_id=request.user, riddle_number=0)
+        user_save_data = UserSaveData.objects.create(user_id=request.user)
+      
+      fields = []
       if 'riddle_number' in request.data:
         user_save_data.riddle_number = request.data['riddle_number']
-        user_save_data.save(update_fields=['riddle_number'])
+        fields.append('riddle_number')
       if 'riddle_letter_choices' in request.data:
         user_save_data.riddle_letter_choices = request.data['riddle_letter_choices']
-        user_save_data.save(update_fields=['riddle_letter_choices'])
-      return JsonResponse({
-        'success': True,
-        'riddle_number': user_save_data.riddle_number,
-        'riddle_letter_choices': user_save_data.riddle_letter_choices,
-      })
+        fields.append('riddle_letter_choices')
+      if 'image_slider_img' in request.data:
+        user_save_data.image_slider_img = request.data['image_slider_img']
+        fields.append('image_slider_img')
+      if 'image_slider_orientation' in request.data:
+        user_save_data.image_slider_orientation = request.data['image_slider_orientation']
+        fields.append('image_slider_orientation')
+      if 'image_slider_difficulty' in request.data:
+        user_save_data.image_slider_difficulty = request.data['image_slider_difficulty']
+        fields.append('image_slider_difficulty')
+      if 'image_slider_moves' in request.data:
+        user_save_data.image_slider_moves = request.data['image_slider_moves']
+        fields.append('image_slider_moves')
+        
+      user_save_data.save(update_fields=fields)
+      
+      return JsonResponse( {'success': True} )
+    
