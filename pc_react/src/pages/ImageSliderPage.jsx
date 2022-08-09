@@ -8,18 +8,15 @@ import { getDifficultyConstants } from '../components/imageslider/constants'
 import DifficultySelector from '../components/imageslider/DifficultySelector';
 // API
 import { ImageAPI } from '../components/api/ImageAPI'
+import axios from 'axios'
 
 
 function ImageSliderPage() {
 
   const [ imageURL, setImageURL ] = useState('')
-  const [ difficulty, setDifficulty ] = useState('easy')
+  const [ difficulty, setDifficulty ] = useState('medium')
 
   const { BOARD_SIZE, GRID_SIZE, TILE_COUNT } = getDifficultyConstants(difficulty)
-
-  useEffect( () => {
-    getNewImage()
-  }, [])
 
   async function getNewImage(imgID=null) {
     setImageURL('')
@@ -27,17 +24,14 @@ function ImageSliderPage() {
     setImageURL(await url)
   }
 
-  const handleNewGameClick = () => {
-    getNewImage()
-  }
-
   const getBoardContainerStyle = {
     height: BOARD_SIZE,
+    margin: '30px 20px 20px 30px',
   }
 
   return (
     <div className="App">
-      <DifficultySelector 
+      <DifficultySelector
         difficulty={difficulty}
         setDifficulty={setDifficulty}
         imageURL={imageURL}
@@ -55,8 +49,10 @@ function ImageSliderPage() {
       <div className="App" style={getBoardContainerStyle}>
         <SliderBoard 
           imageURL={imageURL}
-          handleNewGameClick={handleNewGameClick}
+          setImageURL={setImageURL}
           difficulty={difficulty}
+          setDifficulty={setDifficulty}
+          getNewImage={getNewImage}
         />
       </div>
     </div>

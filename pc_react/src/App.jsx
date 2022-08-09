@@ -66,7 +66,7 @@ function App() {
   }, [])
 
   return (
-    <section className="p-0">
+    <>
       <Router>
         <Routes>
           <Route exact path='/' element={ 
@@ -76,7 +76,7 @@ function App() {
           <Route path='/imageslider' element={ <ImageSliderPage />} />
         </Routes>
       </Router>      
-    </section>
+    </>
 
   );
 }

@@ -93,11 +93,12 @@ def load_save_data(request):
   if request.user.is_authenticated:
     try:
       user_save_data = UserSaveData.objects.get(user_id=request.user)
+      print(user_save_data)
       data = serializers.serialize("json", [user_save_data])
+      print('data: ', data)
       return HttpResponse(data)
     except:
       return JsonResponse({'fail': True})
-
 
 @api_view(['POST'])
 def save_data(request):
@@ -124,6 +125,9 @@ def save_data(request):
       if 'image_slider_difficulty' in request.data:
         user_save_data.image_slider_difficulty = request.data['image_slider_difficulty']
         fields.append('image_slider_difficulty')
+      if 'image_slider_started' in request.data:
+        user_save_data.image_slider_started = request.data['image_slider_started']
+        fields.append('image_slider_started')
       if 'image_slider_moves' in request.data:
         user_save_data.image_slider_moves = request.data['image_slider_moves']
         fields.append('image_slider_moves')

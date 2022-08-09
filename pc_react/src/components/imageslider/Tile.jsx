@@ -1,6 +1,6 @@
 import { Motion, spring } from 'react-motion'
 import { getDifficultyConstants } from './constants'
-import { getGridPosition, getActualPosition, getBackgroundPosition } from './helperfunctions'
+import { getGridPosition, getActualPosition, getBackgroundPosition } from './sliderhelperfunctions'
 
 
 function Tile(props) {

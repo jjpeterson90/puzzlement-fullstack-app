@@ -1,6 +1,8 @@
 #root {
   max-width: 1280px;
-  margin: 0 auto;
+  width: 70%;
+  min-height: 100%;
+  /* margin: 0 80vw; */
 }
 
 .App {

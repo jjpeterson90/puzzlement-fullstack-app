@@ -17,13 +17,14 @@ class AppUser(AbstractUser):
 class UserSaveData(models.Model):
   user_id = models.OneToOneField(AppUser, on_delete=models.CASCADE)
   riddle_number = models.IntegerField(default=0)
-  riddle_letter_choices = models.CharField(max_length=50)
+  riddle_letter_choices = models.CharField(max_length=250)
   image_slider_img = models.URLField(max_length=500)
-  image_slider_orientation = models.CharField(max_length=50)
-  image_slider_difficulty = models.CharField(max_length=50)
+  image_slider_orientation = models.CharField(max_length=250)
+  image_slider_difficulty = models.CharField(max_length=250)
+  image_slider_started = models.BooleanField(default=False)
   image_slider_moves = models.IntegerField(default=0)
   tile_flip_orientation = models.CharField(max_length=250)
-  tile_flip_difficulty = models.CharField(max_length=50)
+  tile_flip_difficulty = models.CharField(max_length=250)
 
 class Riddle(models.Model):
   user_id = models.ForeignKey(AppUser, on_delete=models.CASCADE)
@@ -33,9 +34,9 @@ class PictureSlider(models.Model):
   user_id = models.ForeignKey(AppUser, on_delete=models.CASCADE)
   image_url = models.URLField(max_length=500)
   moves = models.IntegerField(default=0)
-  difficulty = models.CharField(max_length=50)
+  difficulty = models.CharField(max_length=250)
     
 class TileFlip(models.Model):
   user_id = models.ForeignKey(AppUser, on_delete=models.CASCADE)
-  difficulty = models.CharField(max_length=50)
+  difficulty = models.CharField(max_length=250)
   moves = models.IntegerField(default=0)

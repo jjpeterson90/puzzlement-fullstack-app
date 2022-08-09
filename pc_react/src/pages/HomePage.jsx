@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import LoginRegister from '../components/LoginRegister'
-import PuzzlesHome from '../components/PuzzlesHome'
+import LoginRegister from '../components/home/LoginRegister'
+import PuzzlesHome from '../components/home/PuzzlesHome'
 
 function HomePage ( {user, handleLoginForm, handleLogout} ) {
 

@@ -1,20 +1,22 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios';
 import { getDifficultyConstants } from './constants';
-import { shuffle, canSlide, swapTiles, isSolved } from './helperfunctions'
+import { shuffle, canSlide, swapTiles, isSolved } from './sliderhelperfunctions'
 // Components
 import Tile from './Tile'
 // Bootstrap & Icons
 import Button from 'react-bootstrap/Button';
+import { ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { IoMdShuffle } from 'react-icons/io'
 import { ImSpinner9 } from 'react-icons/im'
 
-function SliderBoard( {imageURL, handleNewGameClick, difficulty } ) {
+function SliderBoard( {imageURL, setImageURL, difficulty, setDifficulty, getNewImage} ) {
 
   const { BOARD_SIZE, GRID_SIZE, TILE_COUNT } = getDifficultyConstants(difficulty)
 
   const [ tiles, setTiles ] = useState([...Array(TILE_COUNT).keys()])
   const [ started, setStarted ] = useState(false)
+  const [ initialLoad , setInitialLoad ] = useState(true)
 
   const tileWidth = Math.round(BOARD_SIZE / GRID_SIZE)
   const tileHeight = Math.round(BOARD_SIZE / GRID_SIZE)
@@ -23,13 +25,18 @@ function SliderBoard( {imageURL, handleNewGameClick, difficulty } ) {
     height: BOARD_SIZE,
   }
 
+  console.log('Loading? ', initialLoad)
+
   useEffect( () => {
-    setStarted(false)
-    setTiles([...Array(TILE_COUNT).keys()])
-    if (imageURL) {
-        save_data({
+    load_game_data()
+  }, [])
+
+  useEffect( () => {
+    if (imageURL && !initialLoad) {
+      setTiles([...Array(TILE_COUNT).keys()])
+      setStarted(false)
+      save_data({
         image_slider_img: imageURL,
-        image_slider_orientation: tiles,
         image_slider_difficulty: difficulty,
         //image_slider_moves: //moves
       })
@@ -37,15 +44,45 @@ function SliderBoard( {imageURL, handleNewGameClick, difficulty } ) {
   }, [imageURL])
 
   useEffect( () => {
-    save_data({
-      image_slider_orientation: tiles,
-      //image_slider_moves: //moves
-    })
+    if (!initialLoad) {
+      save_data({
+        image_slider_orientation: tiles,
+      })
+    }
   }, [tiles])
+
+  useEffect( () => {
+    if (!initialLoad) {
+      save_data({
+        image_slider_started: started,
+      })      
+    }
+  }, [started])
 
   function save_data(data) {
     axios.post('/save', data).then(response => {
       console.log('data saved: ', response)
+    })
+  }
+
+  function load_game_data() {
+    axios.get('/loadsave').then(response => {
+      if (!response.data['fail']) {
+        const loaded_data = response.data[0].fields
+        setDifficulty(loaded_data['image_slider_difficulty'])
+        setStarted(loaded_data['image_slider_started'])
+        setTiles(JSON.parse(loaded_data['image_slider_orientation']))
+        setImageURL(loaded_data['image_slider_img'])
+        setTimeout( () => {
+          setInitialLoad(false)
+        }, 500)
+        
+      } else {
+        getNewImage()
+        setTimeout( () => {
+          setInitialLoad(false)
+        }, 500)
+      }
     })
   }
 
@@ -59,7 +96,9 @@ function SliderBoard( {imageURL, handleNewGameClick, difficulty } ) {
   }
 
   const handleTileClick = (index) => {
-    slideTile(index)
+    if (started) {
+      slideTile(index)
+    }
   }
 
   const shuffleTiles = () => {
@@ -76,10 +115,51 @@ function SliderBoard( {imageURL, handleNewGameClick, difficulty } ) {
     shuffleTiles()
   }
 
+  const handleNewGameClick = () => {
+    setTiles([...Array(TILE_COUNT).keys()])
+    setStarted(false)
+    getNewImage()
+  }
+
+  const handleResetClick = () => {
+    setStarted(false)
+    setTiles([...Array(TILE_COUNT).keys()])
+  }
+
+  // const handleDifficultyChange = (event) => {
+  //   setImageURL('')
+  //   const imgID = imageURL.split('/')[4]
+  //   getNewImage(imgID)
+  //   setDifficulty(event.target.value)
+  //   setStarted(false)
+  // }
+    
+  const devSolve = () => {
+    setTiles([...Array(TILE_COUNT).keys()])
+  }
+
   const winner = isSolved(tiles)
+
+  // const buttonStyle = {
+  //   width: "80px",
+  //   height: "32px",
+  //   padding: 0,
+  // }
 
   return (
     <>
+      {/* <div className="diff-options-container">
+        <ToggleButtonGroup
+          color="primary"
+          value={difficulty}
+          exclusive
+          onChange={(e) => handleDifficultyChange(e)}
+        >
+          <ToggleButton style={{...buttonStyle}} value="easy">Easy</ToggleButton>
+          <ToggleButton style={{...buttonStyle}} value="medium">Medium</ToggleButton>
+          <ToggleButton style={{...buttonStyle}} value="hard">Hard</ToggleButton>
+        </ToggleButtonGroup>      
+      </div> */}
       { winner && started ?
         <h2>Congratulations!</h2> : null}
       { started ?
@@ -104,20 +184,27 @@ function SliderBoard( {imageURL, handleNewGameClick, difficulty } ) {
               : null }
           </ul>
           : <div className="d-flex justify-content-center align-items-center" style={boardStyle}>
-              <ImSpinner9 id="loading-spinner"/>
+              <ImSpinner9 id="initialLoad-spinner"/>
             </div> }
       { !started && imageURL ?
         <>
           <Button onClick={() => handleStartClick()}>Start Game</Button>
         </>
         : null }
+
       { started && imageURL ?
-        <Button onClick={handleNewGameClick}>New Game</Button>
+        <div>
+          <Button onClick={handleNewGameClick}>New Game</Button>
+          <Button onClick={handleResetClick}>Reset</Button>
+        </div>
         : 
         <Button 
           onClick={handleNewGameClick}
           disabled={imageURL ? false : true}
         >New Image</Button> }
+      <Button variant="success" onClick={devSolve}>
+        DEV-SOLVE
+      </Button>
     </>
   )
 }

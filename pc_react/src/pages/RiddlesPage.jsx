@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
 import axios from 'axios'
 import './css/Riddles.css'
@@ -8,8 +8,13 @@ import AnswerField from '../components/riddles/AnswerField'
 import RiddleOptions from '../components/riddles/RiddleOptions'
 import LetterTiles from '../components/riddles/LetterTiles'
 import PuzzleWin from '../components/riddles/PuzzleWin'
-// data
+// data & helpers
 import riddles from '../data/riddlelist.json'
+import { 
+  shuffleArray,
+  rebuildNestedArrayFromString,
+  makeNewLetterChoices,
+ } from '../components/riddles/riddlehelperfunctions'
 
 
 function RiddlesPage() {
@@ -22,31 +27,33 @@ function RiddlesPage() {
   const [ letterChoices, setLetterChoices ] = useState(false)
   const [ win, setWin ] = useState(false)
 
+  const ANSWER = riddles[count].answer.toUpperCase()
+
   useEffect( () => {
-    load_save_data()
+    load_game_data()
   }, [])
   
   useEffect( () => {
-    if (!firstRender.current) {
+    if (lettersGuessed) {
       checkForWin()
     }
   }, [lettersGuessed])
 
   useEffect( () => {
-    if (!firstRender.current){
-      save_data()
-    }
-  }, [letterChoices])
-
-  useEffect( () => {
     if (win === true) {
       if (!firstRender.current) {
         resetLettersGuessed()
-        makeNewLetterChoices()
+        setLetterChoices(makeNewLetterChoices(ANSWER))
         setWin(false)
       }
     }
   }, [count])
+
+  useEffect( () => {
+    if (count != '' && letterChoices) {
+      save_data()
+    }
+  }, [letterChoices])
 
   function save_data() {
     const letterChoicesAsString = [].concat(...letterChoices).join('')
@@ -59,50 +66,22 @@ function RiddlesPage() {
     })
   }
 
-  function load_save_data() {
+  function load_game_data() {
     axios.get('/loadsave').then(response => {
+      console.log(response)
       if (!response.data['fail']) {
-        const save_data = response.data[0].fields
-        let savedLetterChoices = rebuildNestedArrayFromString(save_data['riddle_letter_choices'])
-        setCount(save_data['riddle_number'])
-        resetLettersGuessed(save_data['riddle_number'])
-        setLetterChoices(savedLetterChoices)
+        const loaded_data = response.data[0].fields
+        let loadedLetterChoices = rebuildNestedArrayFromString(loaded_data['riddle_letter_choices'])
+        setCount(loaded_data['riddle_number'])
+        resetLettersGuessed(loaded_data['riddle_number'])
+        setLetterChoices(loadedLetterChoices)
         firstRender.current = false
       } else {
         resetLettersGuessed()
-        makeNewLetterChoices()
+        setLetterChoices(makeNewLetterChoices(ANSWER))
         firstRender.current = false
       }
     })
-  }
-
-  function rebuildNestedArrayFromString(str) {
-    let index = 0
-    let arr = []
-    for (let i = 0; i < str.length; i++) {
-      if (str[i].match(/\d/)) {
-        if (arr[index]) arr[index][0] += str[i]
-        else arr[index] = [str[i]]
-      } else {
-        arr[index][1] = str[i]
-        index += 1
-      }
-    }
-    return arr
-  }
-
-  function makeNewLetterChoices() {
-    let list = riddles[count].answer.toUpperCase().split('')
-    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    while (list.length < 14) {
-      list.push(alphabet.charAt(Math.floor(Math.random()*alphabet.length)))
-    }
-    const listWithLetterIDs = list.map((letter, index) => {
-      return [index.toString(), letter]
-    })
-    const newList = shuffleArray(listWithLetterIDs)
-    setLetterChoices(newList)
-    firstRender.current = false
   }
 
   function resetLettersGuessed(num = count) {
@@ -110,34 +89,24 @@ function RiddlesPage() {
     setLettersGuessed(freshArray)
   }
 
-  function shuffleArray(array) {
-    let newArray = JSON.parse(JSON.stringify(array))
-    let currentIndex = newArray.length
-    let randomIndex
-    while (currentIndex != 0) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-      [newArray[currentIndex], newArray[randomIndex]] = [
-        newArray[randomIndex], newArray[currentIndex]];
-    }
-    return newArray;
-  }
-
   function checkForWin() {
-    const solution = riddles[count].answer.toUpperCase()
     const user_answer = lettersGuessed.map((elem) => {
       if (elem[1].match(/[A-Z]/)) return elem[1]
     }).join('')
-    const answerTiles = document.querySelectorAll('.ans-tile')
+    if (ANSWER === user_answer) {
+      setTimeout( () => {
+        setWin(true)
+      }, 300)
+    }
+    setAnswerTileColor(user_answer)
+  }
 
-    // Set answer tiles font color based on solution status
+  function setAnswerTileColor(user_answer) {
+    const answerTiles = document.querySelectorAll('.ans-tile')
     answerTiles.forEach(element => {
-      if (user_answer.length === solution.length) {
-        if (solution === user_answer) {
+      if (user_answer.length === ANSWER.length) {
+        if (ANSWER === user_answer) {
           element.style.color = 'rgb(0,220,0)'
-          setTimeout( () => {
-            setWin(true)
-          }, 300)
         } else {
           element.style.color = 'rgb(255,130,0)'
         }
@@ -196,7 +165,7 @@ function RiddlesPage() {
       { win ?
         <div className="riddle-win d-flex flex-column justify-content-center align-items-center">
           <PuzzleWin
-            answer={riddles[count].answer}
+            answer={ANSWER}
             count={count}
             setCount={setCount}
           />

@@ -8,8 +8,8 @@ function DifficultySelector( {difficulty, setDifficulty, imageURL, setImageURL, 
   const handleChange = (event) => {
       setImageURL('')
       const imgID = imageURL.split('/')[4]
-      getNewImage(imgID)
       setDifficulty(event.target.value)
+      getNewImage(imgID)
     }
 
   const buttonStyle = {
