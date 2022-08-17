@@ -92,11 +92,13 @@ function MyNavbar( {user, handleLogout} ) {
             </OverlayTrigger>
           </Nav.Item>
           <NavDropdown title="MENU" id="basic-nav-dropdown">
-            <NavDropdown.Item as={Link} to='/' >Home</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to='/'>Home</NavDropdown.Item>
             <NavDropdown.Divider />
-            <NavDropdown.Item as={Link} to="/riddles" >Riddles</NavDropdown.Item>
-            <NavDropdown.Item as={Link} to="/imageslider" >Image Slider</NavDropdown.Item>
-            <NavDropdown.Item as={Link} to="/lightsout" >Lights Out</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/riddles">Knotty Questions</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/imageslider">Untangle</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/lightsout">Unveil</NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item as={Link} to="/leaderboard">Leaderboard</NavDropdown.Item>
             <NavDropdown.Divider />
             <NavDropdown.Item onClick={handleInternalLogout}>Logout</NavDropdown.Item>
           </NavDropdown>

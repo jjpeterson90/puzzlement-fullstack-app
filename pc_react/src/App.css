@@ -1,4 +1,21 @@
+/* DEV SOLVERS */
+
+#hidden-solver {
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  bottom: 1%;
+  left: 1%;
+  border: transparent !important;
+  background: transparent !important;
+}
+#hidden-solver:hover {
+  box-shadow: 0 0.5rem 0.5rem 0rem rgb(0, 0, 0);
+  transform: translateY(-0.5rem);
+}
+
 /* APP CONTAINERS */
+
 #root {
   display: grid;
   place-items: center;
@@ -28,12 +45,31 @@
 
 } */
 
+#popover-basic {
+  height: 200px;
+  width: 200px;
+}
+.nav-tabs .nav-link.active {
+  background-color: transparent !important;
+}
+
 
 /* LOGIN SCREEN */
 
 .login-screen {
   height: 700px;
   width: 460px;
+}
+.login-title {
+  height: 200px;
+  display: flex;
+  align-items: center;
+}
+.login-msg {
+  height: 80px;
+}
+.login-form {
+  height: 420px;
 }
 .login-button {
   font-family: 'M PLUS Rounded 1c', sans-serif !important;
@@ -43,38 +79,19 @@
   color: rgb(251, 250, 235) !important;
   background-color: rgb(37, 200, 162) !important;
 }
+.login-button:hover {
+  box-shadow: 0 0.5rem 0.5rem -0.4rem rgb(0, 0, 0);
+  transform: translateY(-0.25rem);
+}
 
 
 /* HOME PAGE */
 
 .home-title {
-  padding-top: 20%;
+  height: 350px;
 }
 .game-links {
-  padding-top: 40%;
-}
-
-/* ACCOUNT PAGE */
-
-.fairy-button {
-  font-family: 'M PLUS Rounded 1c', sans-serif !important;
-  font-size: 1.5rem !important;
-  font-weight: 700 !important;
-  border: rgb(35, 122, 131) !important;
-  color: rgb(251, 250, 235) !important;
-  background-color: rgb(37, 200, 162) !important;
-}
-#logout-row {
-  background-color: rgb(161, 41, 41) !important;
-}
-.logout-button {
-  font-family: 'M PLUS Rounded 1c', sans-serif !important;
-  font-size: 1.5rem !important;
-  font-weight: 700 !important;
-  align-self: center !important;
-  border: rgb(35, 122, 131) !important;
-  color: rgb(251, 250, 235) !important;
-  background-color: rgb(161, 41, 41) !important;
+  height: 350px;
 }
 
 
@@ -147,24 +164,6 @@
 }
 #isNavbar {
   position: relative;
-}
-
-/* ACCOUNT PAGE */
-
-#fairy-image {
-  height: 100px;
-  float: right;
-  margin-left: 12px;
-}
-#idea-details-button {
-  border: solid rgb(35, 122, 131);
-  background: transparent;
-  color:rgb(251, 250, 235);
-}
-#idea-details-button:hover {
-  border: none;
-  outline: none;
-  color: rgb(162,235,136) !important;
 }
 
 /* PUZZLE LOADING */

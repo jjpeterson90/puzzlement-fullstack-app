@@ -17,7 +17,8 @@ import {
   rebuildNestedArrayFromString,
   makeNewLetterChoices,
  } from '../components/riddles/riddlehelperfunctions'
-
+// APIs
+import { Riddle_Score_Save } from '../components/api/BackendAPI'
 
 function RiddlesPage() {
 
@@ -113,7 +114,11 @@ function RiddlesPage() {
     if (ANSWER === user_answer) {
       setTimeout( () => {
         setWin(true)
-      }, 300)
+        const data = {
+          riddle_number: count,
+        }
+        Riddle_Score_Save(data)
+      }, 500)
     }
     setAnswerTileColor(user_answer)
   }
@@ -185,6 +190,7 @@ function RiddlesPage() {
             answer={ANSWER}
             count={count}
             setCount={setCount}
+            setWin={setWin}
           />
         </div>
         :

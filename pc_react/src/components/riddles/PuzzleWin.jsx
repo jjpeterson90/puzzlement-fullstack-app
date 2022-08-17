@@ -1,6 +1,10 @@
+import { useRef } from 'react'
 import Button from "react-bootstrap/Button";
 
-function PuzzleWin( {answer, count, setCount} ) {
+
+function PuzzleWin( {answer, count, setCount, setWin} ) {
+
+  const firstAnswer = useRef(answer)
 
   function nextRiddle() {
     const next = count+1
@@ -17,7 +21,7 @@ function PuzzleWin( {answer, count, setCount} ) {
         The correct answer is
       </h3>
       <h2 className="mb-5">
-        {answer}
+        {firstAnswer.current}
       </h2>
       <Button onClick={() => nextRiddle()} id="riddle-win-button">
         Continue

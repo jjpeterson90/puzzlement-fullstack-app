@@ -1,19 +1,14 @@
-import { useEffect, useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
-import Container from 'react-bootstrap/esm/Container'
-import Row from 'react-bootstrap/esm/Row'
-import Col from 'react-bootstrap/esm/Col'
+import Puzzlement from '../images/Text&pieces.png'
 
 
 export default function Home() {
 
   return (
     <>
-      <div className="home-title text-center">
-        <h1>
-          Puzzlement
-        </h1>
+      <div className="home-title d-flex justify-content-center align-items-center">
+        <img src={Puzzlement} />
       </div>
       <div className="game-links text-center">
         <Link to={'/riddles'} className="text-decoration-none text-white">

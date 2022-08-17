@@ -1,3 +1,4 @@
+import './css/AccountPage.css'
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import FairyImage from '../images/pngaaa.com-217782.png'
@@ -7,6 +8,9 @@ import Container from "react-bootstrap/esm/Container"
 import Row from "react-bootstrap/esm/Row"
 import Button from "react-bootstrap/esm/Button"
 import Form from 'react-bootstrap/Form'
+// Components
+import ResetSaveData from '../components/account/ResetSaveData'
+import DeleteAccount from '../components/account/DeleteAccount'
 
 
 function AccountPage( {handleLogout} ) {
@@ -41,7 +45,7 @@ function AccountPage( {handleLogout} ) {
       <>
         { idea.activity ? 
             <div>
-              <h4>{idea.activity}</h4>
+              <h4>{idea.activity}!</h4>
             </div>    
           : null
         }
@@ -54,37 +58,26 @@ function AccountPage( {handleLogout} ) {
     selected.current = event.target.value
   }
 
-  const titleStyle = {
-    height: 100,
-  }
-  const guideStyle = {
-    height: 200,
-  }
-  const dropdownStyle = {
-    width: 200,
-  }
-  const ideaTextStyle = {
-    height: 250,
-    backgroundColor: 'rgba(255, 255, 255, .1)'
-  }
-  const ideaBtnStyle = {
-    height: 75,
-  }
-  const logoutBtnStyle = {
-    height: 75,
-  }
-
   return (
     <Container>
-      <Row className="align-items-center" style={titleStyle}>
+      <Row className="align-items-center title-box">
         <div className="text-center mx-auto">
           <h2>
-            Account Settings
+            Account
           </h2>
         </div>
       </Row>
       <hr className="my-0"/>
-      <Row className="text-center align-items-center" style={guideStyle}>
+      <div className="d-flex justify-content-evenly align-items-center account-options-box">
+        <div id="reset-save-data">
+          <ResetSaveData />
+        </div>
+        {/* <div id="delete-account">
+          <DeleteAccount handleLogout={handleLogout}/>
+        </div> */}
+      </div>
+      <hr className="my-0" />
+      <Row className="text-center align-items-center guide-box">
         <h4 className="mt-2">
           Looking for a new activity?
         </h4>
@@ -92,7 +85,7 @@ function AccountPage( {handleLogout} ) {
           Choose an option from the menu below and ask the Idea Fairy for advice!
         </p>
         <div className="d-flex justify-content-center">
-          <Form.Select style={dropdownStyle} onChange={handleSelectorChange} name="selector">
+          <Form.Select className="dropdown-box" onChange={handleSelectorChange} name="selector">
             { 
               CATEGORY.map((val, i) => {
                 return <option value={CATEGORY[i]}> {LABEL[i]} </option>
@@ -101,18 +94,18 @@ function AccountPage( {handleLogout} ) {
           </Form.Select>
         </div>
       </Row>
-      <Row className="align-items-center" style={ideaTextStyle}>
+      <Row className="align-items-center idea-text-box">
         <div className="text-center d-flex align-items-center justify-content-center">
           {displayIdea()}
         </div>
       </Row>
-      <Row style={ideaBtnStyle}>
+      <div className="idea-btn-box">
         <Button className="fairy-button" onClick={getIdea}>
           Ask Idea Fairy
         </Button>
-      </Row> 
-      <Row style={logoutBtnStyle} id="logout-row">
-        <Button className="logout-button" as={Link} to={{ pathname: '/' }} variant="danger" onClick={handleLogout}>
+      </div> 
+      <Row className="logout-btn-box" id="logout-row">
+        <Button className="logout-button" as={Link} to={{ pathname: '/' }} onClick={handleLogout}>
           Logout
         </Button>
       </Row>

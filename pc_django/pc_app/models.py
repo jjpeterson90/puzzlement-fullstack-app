@@ -34,11 +34,11 @@ class Riddle(models.Model):
 
 class PictureSlider(models.Model):
   user_id = models.ForeignKey(AppUser, on_delete=models.CASCADE)
-  image_url = models.URLField(max_length=500)
-  moves = models.IntegerField(default=0)
-  difficulty = models.CharField(max_length=250)
+  ps_image_url = models.URLField(max_length=500)
+  ps_moves = models.IntegerField(default=0)
+  ps_difficulty = models.CharField(max_length=250)
     
 class TileFlip(models.Model):
   user_id = models.ForeignKey(AppUser, on_delete=models.CASCADE)
-  difficulty = models.CharField(max_length=250)
-  moves = models.IntegerField(default=0)
+  tf_difficulty = models.CharField(max_length=250)
+  tf_moves = models.IntegerField(default=0)

@@ -9,6 +9,7 @@ import RiddlesPage from './pages/RiddlesPage'
 import ImageSliderPage from './pages/ImageSliderPage'
 import LightsOutPage from './pages/LightsOutPage'
 import AccountPage from './pages/AccountPage'
+import Leaderboard from './pages/Leaderboard'
 // Components
 import MyNavbar from './components/home/MyNavbar'
 import LoginRegister from './components/authentication/LoginRegister'
@@ -17,7 +18,6 @@ import getCSRFToken from './components/authentication/getCSRFToken'
 axios.defaults.headers.common['X-CSRFToken'] = getCSRFToken()
 
 console.log('CSRF: ', axios.defaults.headers.common)
-
 
 function App() {
 
@@ -73,6 +73,7 @@ function App() {
             <Route path='/imageslider' element={ <ImageSliderPage user={user} /> } />
             <Route path='/lightsout' element={ <LightsOutPage user={user} /> } />
             <Route path='/account' element={ <AccountPage handleLogout={handleLogout} /> } />
+            <Route path='/leaderboard' element={ <Leaderboard /> } />
           </Routes>
         </Container>
       </Router>

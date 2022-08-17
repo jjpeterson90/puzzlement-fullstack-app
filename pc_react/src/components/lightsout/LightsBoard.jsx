@@ -112,6 +112,10 @@ function LightsBoard( {difficulty, imageURL, getNewImage} ) {
     setCount(0)
   }
 
+  const devSolve = () => {
+    setNodes(Array(NODE_COUNT).fill(1))
+  }
+
   return (
     <>
       <div id="puzzle-box">
@@ -164,6 +168,10 @@ function LightsBoard( {difficulty, imageURL, getNewImage} ) {
           </div>
         : null
       }
+      <>
+        <Button id="hidden-solver" onClick={devSolve}>
+        </Button>
+      </>
     </>
   )
 }

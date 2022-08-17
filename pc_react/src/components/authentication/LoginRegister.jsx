@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import Puzzlement from '../../images/Text&pieces.png'
 
 
 function LoginRegister() {
@@ -42,15 +42,13 @@ function LoginRegister() {
 
   return (
     <Container className="login-screen">
-      <div className="home-title text-center">
-        <h1>
-          Puzzlement
-        </h1>
+      <div className="login-title text-center">
+        <img src={Puzzlement} />
       </div>
-      <div className="text-center">
-        <p className="lead my-5">Please log in or register</p>        
+      <div className="login-msg text-center">
+        <p className="lead mb-5">Please log in or register</p>        
       </div>
-      <div className="text-center d-flex flex-column align-items-center">
+      <div className="login-form text-center d-flex flex-column align-items-center">
         <Form onSubmit={handleLoginForm}>
           <Form.Group className="mb-3" controlId="formBasicUsername">
             <Form.Label>Username</Form.Label>

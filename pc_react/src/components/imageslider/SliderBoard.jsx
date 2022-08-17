@@ -5,6 +5,8 @@ import { shuffle, canSlide, swapTiles, isSolved } from './sliderhelperfunctions'
 // Components
 import Tile from './Tile'
 import SliderWin from './SliderWin'
+// APIs
+import { Imgslider_Score_Save } from '../api/BackendAPI'
 // Bootstrap & Icons
 import Button from 'react-bootstrap/Button';
 import { IoMdShuffle, IoMdRefresh } from 'react-icons/io'
@@ -115,6 +117,12 @@ function SliderBoard( {imageURL, setImageURL, difficulty, setDifficulty, getNewI
     }
     if (isSolved(tiles)) {
       setWin(true)
+      const data = {
+        image_url: imageURL,
+        moves: count,
+        difficulty: difficulty,
+      }
+      Imgslider_Score_Save(data)
     }
   }
 
@@ -242,6 +250,10 @@ function SliderBoard( {imageURL, setImageURL, difficulty, setDifficulty, getNewI
           </div>
         : null
       }
+      <>
+        <Button id="hidden-solver" onClick={devSolve}>
+        </Button>
+      </>
     </>
   )
 }

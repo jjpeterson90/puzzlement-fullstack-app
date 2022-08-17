@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import Http404, HttpResponse, JsonResponse
 from django.core import serializers
 from django.contrib.auth import login, logout, authenticate
+from django.forms import model_to_dict
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import AppUser, UserSaveData, Riddle, PictureSlider, TileFlip
@@ -85,6 +86,7 @@ def who_am_i(request):
     return JsonResponse({'user': data})
   else:
     return JsonResponse({'user': None})
+  
     
     
 ###  USER SAVE DATA   #######################################
@@ -149,6 +151,115 @@ def save_data(request):
       
       return JsonResponse( {'success': True} )
     
+@api_view(['DELETE'])
+def delete_save_data(request):
+  if request.user.is_authenticated:
+    user_save_data = UserSaveData.objects.get(user_id=request.user)
+    user_save_data.delete()
+    
+    return JsonResponse({'success': True})
+  return JsonResponse({'success': False})
+
+
+###     SCORE DATA    #######################################
+
+@api_view(['GET'])
+def riddle_scores(request):
+  if request.user.is_authenticated:
+    # user_list = AppUser.objects.all()
+    # print('user_list: ', user_list)
+    # scores = []
+    # for user in user_list:
+    #   print('user: ', user.username)
+    #   scores = Riddle.objects.filter(user_id=user).exists()
+    #   if scores
+    # scores = Riddle.objects.select_related().all()
+    # data = serializers.serialize("json", AppUser.objects.select_related('').all(), fields=('username', 'riddle_number'))
+    pass
+
+@api_view(['POST'])
+def riddle_score_save(request):
+  if request.user.is_authenticated:
+    try:
+      new = Riddle.objects.create(
+        user_id = request.user,
+        riddle_number = request.data['riddle_number'],
+      )
+      new.save()
+    except:
+      return JsonResponse({'success':False})
+    return JsonResponse({'success':True})
+
+@api_view(['GET'])
+def imgslider_scores(request):
+  if request.user.is_authenticated:
+    user_list = AppUser.objects.all()
+    slider_scores_list = PictureSlider.objects.all()
+    flip_scores_list = TileFlip.objects.all()
+    users = serializers.serialize('json', user_list)
+    slider_scores = serializers.serialize('json', slider_scores_list)
+    
+    print(users)
+    print(slider_scores)
+
+    return JsonResponse({
+      'users': users,
+      'scores': slider_scores,
+    })
+    
+    # users = serializers.serialize("json", [user_list], fields=['username'])
+    # user_list = AppUser.objects.all()
+    # print('user_list: ', user_list)
+    # full_list = []
+    # for user in user_list:
+    #   userObj = {}
+    #   userObj['username'] = user.username
+    #   testScores = PictureSlider.objects.filter(user_id=user).exists()
+    #   scores_list = []
+    #   if testScores:
+    #     scores = PictureSlider.objects.filter(user_id=user)
+    #     for score in scores:
+    #       scores_list.append(model_to_dict(score))
+    #     userObj['scores'] = scores_list
+    #   full_list.append(scores_list)
+      
+    # return HttpResponse(full_list)
+  return HttpResponse('boo')
+
+@api_view(['POST'])
+def imgslider_score_save(request):
+  if request.user.is_authenticated:
+    try:
+      new = PictureSlider.objects.create(
+        user_id = request.user,
+        image_url = request.data['image_url'],
+        moves = request.data['moves'],
+        difficulty = request.data['difficulty'],
+      )
+      new.save()
+    except:
+      return JsonResponse({'success':False})
+    return JsonResponse({'success':True})
+
+@api_view(['GET'])
+def tileflip_scores(request):
+  if request.user.is_authenticated:
+    pass
+
+@api_view(['POST'])
+def tileflip_score_save(request):
+  if request.user.is_authenticated:
+    try:
+      new = TileFlip.objects.create(
+        user_id = request.user,
+        moves = request.data['moves'],
+        difficulty = request.data['difficulty'],
+      )
+      new.save()
+    except:
+      return JsonResponse({'success':False})
+    return JsonResponse({'success':True})
+
 
 ###   ACTIVITY API    #######################################
 
@@ -170,4 +281,3 @@ def activity_API(request):
       return JsonResponse({
         'success': False,
       })
-    

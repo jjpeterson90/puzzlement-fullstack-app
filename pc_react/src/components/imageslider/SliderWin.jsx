@@ -12,7 +12,7 @@ function SliderWin( {imageURL, count, handleNewGameClick} ) {
         You won in {count} moves
       </h3>
       <img src={imageURL} className="mb-5" />
-      <Button onClick={() => (handleNewGameClick)} id="slider-win-button">
+      <Button onClick={handleNewGameClick} id="slider-win-button">
         Continue
       </Button>
     </div>
