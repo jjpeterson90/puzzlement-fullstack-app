@@ -1,84 +1,84 @@
 import './App.css'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
-import axios from 'axios';
-import HomePage from './pages/HomePage'
+import Container from 'react-bootstrap/esm/Container'
+import axios from 'axios'
+// Pages
+import Home from './pages/Home'
 import RiddlesPage from './pages/RiddlesPage'
 import ImageSliderPage from './pages/ImageSliderPage'
-
-const getCSRFToken = () => {
-  let csrfToken
-  const cookies = document.cookie.split(';')
-  for (let cookie of cookies) {
-    const crumbs = cookie.split('=')
-    if (crumbs[0].trim() === 'csrftoken') {
-      csrfToken = crumbs[1]
-    }
-  }
-  return csrfToken
-}
+import LightsOutPage from './pages/LightsOutPage'
+import AccountPage from './pages/AccountPage'
+// Components
+import MyNavbar from './components/home/MyNavbar'
+import LoginRegister from './components/authentication/LoginRegister'
+// CSRF
+import getCSRFToken from './components/authentication/getCSRFToken'
 axios.defaults.headers.common['X-CSRFToken'] = getCSRFToken()
+
+console.log('CSRF: ', axios.defaults.headers.common)
 
 
 function App() {
 
-  const [ user, setUser ] = useState(null)
-
-  const handleLoginForm = (event) => {
-    event.preventDefault()
-    const username = event.target[0].value
-    const password = event.target[1].value
-
-    // '/signup' or '/login' depending on button pressed
-    let eventType = event.nativeEvent.submitter.value
-
-    axios.post(eventType, {
-      username:username,
-      password:password,
-    }).then((response) => {
-      if (response.data['success']) {
-        setUser(response.data['user'])
-        window.location.reload()
-      }
-      else {
-        // failed to login
-        window.location.reload()
-      }
-    })
-  }
-
+  const isMounted = useRef(false)
+  const [ user, setUser ] = useState()
+  
   const handleLogout = () => {
     axios.post('/logout').then((response) => {
       console.log('logout response: ', response)
-      window.location.reload()
+      whoAmI()
     })
   }
 
-  const whoAmI = async () => {
-    const response = await axios.get('/whoami')
-    console.log('whoami: ', response.data)
-    setUser(response.data['user'])
+  async function whoAmI () {
+    const response = await axios.get('/whoami').catch((resp) => {
+      console.log('whoami error: ', resp)
+    })
+    if (response.data['user']) {
+      const data = JSON.parse(response.data['user'])
+      const username = data[0].fields['username']
+      console.log('whoami: ', username)
+      setUser(username)
+    } else {
+      console.log('whoami: undefined')
+      setUser(null)
+    }
+    isMounted.current = true
   }
 
-  // set user on login
+  function getRoute() {
+    console.log(`mounted? ${isMounted.current}, user? ${user}`)
+    if (isMounted.current) {
+      if (user) {
+        return <Home />
+      } else {
+        return <LoginRegister />
+      }
+    }
+  }
+
   useEffect( () => {
     whoAmI()
   }, [])
-
+  
   return (
-    <>
+    <Container className="Inner-App">
       <Router>
-        <Routes>
-          <Route exact path='/' element={ 
-            <HomePage handleLoginForm={handleLoginForm} handleLogout={handleLogout} user={user}/> 
-          } />
-          <Route path='/riddles' element={ <RiddlesPage /> } />
-          <Route path='/imageslider' element={ <ImageSliderPage />} />
-        </Routes>
-      </Router>      
-    </>
-
+        <MyNavbar user={user} handleLogout={handleLogout} />
+        <Container id="App-Body">
+          <Routes>
+            <Route exact path='/' element={ getRoute() } />
+            <Route path='/riddles' element={ <RiddlesPage /> } />
+            <Route path='/imageslider' element={ <ImageSliderPage user={user} /> } />
+            <Route path='/lightsout' element={ <LightsOutPage user={user} /> } />
+            <Route path='/account' element={ <AccountPage handleLogout={handleLogout} /> } />
+          </Routes>
+        </Container>
+      </Router>
+    </Container>
   );
 }
 
 export default App;
+

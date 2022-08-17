@@ -5,9 +5,12 @@ import { getGridPosition, getActualPosition, getBackgroundPosition } from './sli
 
 function Tile(props) {
 
-  const { index, tile, width, height, imageURL, difficulty, handleTileClick } = props
+  const { index, tile, imageURL, difficulty, handleTileClick } = props
   const { BOARD_SIZE, GRID_SIZE, TILE_COUNT } = getDifficultyConstants(difficulty)
 
+  const width = Math.round(BOARD_SIZE / GRID_SIZE)
+  const height = Math.round(BOARD_SIZE / GRID_SIZE)
+  
   const { row, col } = getGridPosition(index, GRID_SIZE)
   const actualPosition = getActualPosition(row, col, width, height)
 

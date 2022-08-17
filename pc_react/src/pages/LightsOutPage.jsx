@@ -1,40 +1,38 @@
-import './css/ImageSlider.css'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
-import Container from 'react-bootstrap/esm/Container'
+import {getDifficultyConstants} from '../components/lightsout/constants'
+import '../App.css'
+import './css/LightsOut.css'
 // Components
-import SliderBoard from '../components/imageslider/SliderBoard'
-import { getDifficultyConstants } from '../components/imageslider/constants'
+import LightsBoard from '../components/lightsout/LightsBoard'
 import DifficultySelector from '../components/shared/DifficultySelector';
 // API
 import { ImageAPI } from '../components/api/ImageAPI'
 
 
-function ImageSliderPage() {
+function TileFlipPage() {
 
   const [ imageURL, setImageURL ] = useState('')
   const [ difficulty, setDifficulty ] = useState('medium')
-  
+
   const { BOARD_SIZE, GRID_SIZE, TILE_COUNT } = getDifficultyConstants(difficulty)
 
+  const boardContainerStyle = {
+    height: getDifficultyConstants('hard').BOARD_SIZE,
+  }
+  
   async function getNewImage(imgID=null) {
     setImageURL('')
     const url = await ImageAPI(BOARD_SIZE, imgID)
-    setImageURL(await url)
-  }
-
-  const boardContainerStyle = {
-    height: 400,
+    setImageURL(url)
   }
 
   return (
-    <Container className="p-0">
+    <>
       <div id="title-box">
         <div className="text-center">
-          <h1>
-            Untangle
-          </h1>
+          <h1>Unveil</h1>
         </div>
       </div>
       <hr className="my-0"/>
@@ -47,17 +45,17 @@ function ImageSliderPage() {
           getNewImage={getNewImage}
         />
       </div>
-      <div style={boardContainerStyle}>
-        <SliderBoard 
-          imageURL={imageURL}
-          setImageURL={setImageURL}
+      <div className="App" style={{...boardContainerStyle}}>
+        <LightsBoard 
           difficulty={difficulty}
           setDifficulty={setDifficulty}
+          imageURL={imageURL}
+          setImageURL={setImageURL}
           getNewImage={getNewImage}
         />
       </div>
-    </Container>
+    </>
   )
 }
 
-export default ImageSliderPage
+export default TileFlipPage

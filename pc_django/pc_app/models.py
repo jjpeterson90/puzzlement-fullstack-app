@@ -23,8 +23,10 @@ class UserSaveData(models.Model):
   image_slider_difficulty = models.CharField(max_length=250)
   image_slider_started = models.BooleanField(default=False)
   image_slider_moves = models.IntegerField(default=0)
+  tile_flip_image = models.URLField(max_length=500)
   tile_flip_orientation = models.CharField(max_length=250)
   tile_flip_difficulty = models.CharField(max_length=250)
+  tile_flip_moves = models.IntegerField(default=0)
 
 class Riddle(models.Model):
   user_id = models.ForeignKey(AppUser, on_delete=models.CASCADE)

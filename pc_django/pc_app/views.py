@@ -5,7 +5,7 @@ from django.contrib.auth import login, logout, authenticate
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import AppUser, UserSaveData, Riddle, PictureSlider, TileFlip
-import random, json
+import random, json, requests
 
 sessions = {}
 
@@ -16,6 +16,7 @@ def homepage(request):
   index_page = open('static/index.html').read()
   response = HttpResponse(index_page)
   return response
+
 
 ###  USER AUTH   ############################################
 
@@ -28,6 +29,7 @@ def sign_up(request):
       username = request.data['username'],
       password = request.data['password'],
     )
+    print('user: ', user)
     login(request._request, user)
     response = JsonResponse({'success': True})
     return response
@@ -44,10 +46,9 @@ def log_in(request):
   
   username = request.data['username']
   password = request.data['password']
-  
+  print('usename: ', username, ', password: ', password)
   user = authenticate(username=username, password=password)
   print('user: ', user)
-  print('appuser objects: ', dir(AppUser.objects))
   
   if user is not None:
     if user.is_active:
@@ -131,8 +132,42 @@ def save_data(request):
       if 'image_slider_moves' in request.data:
         user_save_data.image_slider_moves = request.data['image_slider_moves']
         fields.append('image_slider_moves')
+      if 'tile_flip_image' in request.data:
+        user_save_data.tile_flip_image = request.data['tile_flip_image']
+        fields.append('tile_flip_image')
+      if 'tile_flip_orientation' in request.data:
+        user_save_data.tile_flip_orientation = request.data['tile_flip_orientation']
+        fields.append('tile_flip_orientation')
+      if 'tile_flip_difficulty' in request.data:
+        user_save_data.tile_flip_difficulty = request.data['tile_flip_difficulty']
+        fields.append('tile_flip_difficulty')
+      if 'tile_flip_moves' in request.data:
+        user_save_data.tile_flip_moves = request.data['tile_flip_moves']
+        fields.append('tile_flip_moves')
         
       user_save_data.save(update_fields=fields)
       
       return JsonResponse( {'success': True} )
+    
+
+###   ACTIVITY API    #######################################
+
+@api_view(['POST'])
+def activity_API(request):
+  if request.method == 'POST':
+    choice = request.data['choice']
+    if choice == 'random':
+      path = 'http://www.boredapi.com/api/activity/'
+    else:
+      path = f'http://www.boredapi.com/api/activity?type={choice}'
+    response = requests.get(path)
+    if response.status_code == 200:
+      return JsonResponse({
+        'success': True,
+        'message': response.json(),
+      })
+    else:
+      return JsonResponse({
+        'success': False,
+      })
     

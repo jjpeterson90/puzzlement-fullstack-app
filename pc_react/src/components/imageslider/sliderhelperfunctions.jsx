@@ -8,15 +8,20 @@ export function isSolvable(tiles) {
       }
     }
   }
+  console.log('inversions: ', inversions)
   let grid_size = Math.sqrt(tiles.length)
+  let emptyIndex = tiles.indexOf(0)
+  let emptyRow = Math.floor(emptyIndex / grid_size);
   if (inversions == 0) {
     return true
-  } else if (grid_size % 2 != inversions % 2) {
-    return false
-  } else if (grid_size % 2 == 0 && ((inversions + tiles.indexOf(0)) % 2 == 1)) {
-    return false
-  } else {
+  } else if (grid_size % 2 == 1 && inversions % 2 == 0) {
     return true
+  } else if (grid_size % 2 == 0 && emptyRow % 2 == 0 && inversions % 2 == 1) {
+    return true
+  } else if (grid_size % 2 == 0 && emptyRow % 2 == 1 && inversions % 2 == 0) {
+    return true
+  } else {
+    return false
   }
 }
 

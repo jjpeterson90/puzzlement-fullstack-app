@@ -9,10 +9,17 @@ function PuzzleWin( {answer, count, setCount} ) {
 
   return (
     <div className="text-center text-warning">
-      <h2>Congratulations!</h2>
-      <h3>The correct answer is</h3>
-      <h3>{answer}</h3>
-      <Button onClick={() => nextRiddle()}>
+      <h1 className="text-decoration-underline">
+        Correct!
+      </h1>
+      <hr className=" my-0 w-50 mx-auto"/>
+      <h3 className="my-5">
+        The correct answer is
+      </h3>
+      <h2 className="mb-5">
+        {answer}
+      </h2>
+      <Button onClick={() => nextRiddle()} id="riddle-win-button">
         Continue
       </Button>
     </div>

@@ -10,4 +10,5 @@ urlpatterns = [
   path('whoami', views.who_am_i),
   path('save', views.save_data),
   path('loadsave', views.load_save_data),
+  path('activityAPI', views.activity_API),
 ]
